@@ -9,6 +9,7 @@ let room = null
 
 
 const App = () => {
+  const [accessToken, setAccessToken] = useState('')
   const [isJoinMatch, setIsJoinMatch] = useState(false)
   const [isFindingMatch, setIsFindingMatch] = useState(false)
 
@@ -43,7 +44,7 @@ const App = () => {
     try {
       console.log("connect to room")
       client = new Colyseus.Client('ws://localhost:8000')
-      room = await client.joinOrCreate('matchmaking', { accessToken: 'this is token' })
+      room = await client.joinOrCreate('matchmaking', { accessToken })
       if (room != null) {
         console.log("connect to room success")
         registerRoomEvent(room)
@@ -66,10 +67,18 @@ const App = () => {
     setIsFindingMatch(!isFindingMatch)
   }
 
+  const onTokeChanged = (e) => {
+    setAccessToken(e.target.value)
+  }
+
   return (
     <div className="App">
       {!isJoinMatch ?
-        <button onClick={(e) => onJoinMatchClick(e)}>JOIN MATCH MAKING</button> :
+        <>
+          <input type='text' onChange={(e) => onTokeChanged(e)}></input>
+          <button onClick={(e) => onJoinMatchClick(e)} value={accessToken}>JOIN MATCH MAKING</button>
+        </>
+        :
         <>
           <button onClick={(e) => onFindMatchClick(e)}> {!isFindingMatch ? 'find match' : 'cancel find match'}</button>
         </>
